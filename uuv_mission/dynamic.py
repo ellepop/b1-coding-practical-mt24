@@ -78,12 +78,11 @@ class Mission:
     def from_csv(cls, file_name: str):
         # You are required to implement this method
         data = pd.read_csv(file_name)
-        reference = data["reference"].to_numpy()
+        reference = data["reference"].to_numpy() # Assumes file is named as such
         cave_height = data["cave_height"].to_numpy()
         cave_depth = data["cave_depth"].to_numpy()
+        # Input validation not added as assumed that data is clean.
         return cls(reference, cave_height, cave_depth)
-        pass
-
 
 class ClosedLoop:
     def __init__(self, plant: Submarine, controller):
@@ -104,7 +103,7 @@ class ClosedLoop:
             positions[t] = self.plant.get_position()
             observation_t = self.plant.get_depth()
             # Call your controller here
-            # To be uncommentised once module name determined: actions[t] = <module_name>(observation_t, reference[t])
+            actions[t] = self.controller.compute_control(observation_t, mission.reference[t])
             self.plant.transition(actions[t], disturbances[t])
 
         return Trajectory(positions)
